@@ -6,11 +6,11 @@ from openai import OpenAI
 
 from langsmith import traceable
 
-# LOAD ENV
+
 
 load_dotenv()
 
-# OPENROUTER CLIENT
+
 
 client = OpenAI(
 

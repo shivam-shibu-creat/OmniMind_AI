@@ -35,11 +35,11 @@ def ask_question(request: AskRequest):
 
     question = request.question
 
-    # EMBEDDING
+
 
     query_embedding = get_embedding(question)
 
-    # SEARCH
+
 
     results = search_vector(
 
@@ -48,7 +48,7 @@ def ask_question(request: AskRequest):
         question
     )
 
-    # SORT BY BEST RERANK SCORE
+    
 
     results = sorted(
 
@@ -62,7 +62,7 @@ def ask_question(request: AskRequest):
         reverse=True
     )
 
-    # CONTEXT
+
 
     context = "\n\n".join([
 
@@ -71,7 +71,7 @@ def ask_question(request: AskRequest):
         for result in results
     ])
 
-    # GENERATE ANSWER
+
 
     answer = generate_answer(
 
@@ -80,7 +80,7 @@ def ask_question(request: AskRequest):
         context
     )
 
-    # SEARCHED FILES
+    
 
     searched_files = []
 
@@ -96,7 +96,6 @@ def ask_question(request: AskRequest):
 
             searched_files.append(filename)
 
-    # SMART RELEVANT SOURCES
 
     sources = []
 
@@ -121,7 +120,7 @@ def ask_question(request: AskRequest):
 
                 overlap_count += 1
 
-        # ONLY STRONGLY MATCHING CHUNKS
+        
 
         if overlap_count >= 3:
 
@@ -137,7 +136,6 @@ def ask_question(request: AskRequest):
 
                 sources.append(source)
 
-    # LIMIT SOURCES
 
     sources = sources[:3]
 

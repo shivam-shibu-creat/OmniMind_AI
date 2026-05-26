@@ -12,7 +12,6 @@ collection = client.get_or_create_collection(
     name="documents"
 )
 
-# LOAD EXISTING CHUNKS FROM CHROMADB
 
 existing_data = collection.get(
 
@@ -42,7 +41,7 @@ for document, metadata in zip(
         "page_number": metadata["page_number"]
     })
 
-# CROSS-ENCODER RERANKER
+
 
 reranker = CrossEncoder(
     "cross-encoder/ms-marco-MiniLM-L-6-v2"
@@ -101,7 +100,7 @@ def search_vector(
 
     seen_chunks = set()
 
-    # VECTOR SEARCH
+    
 
     documents = vector_results["documents"][0]
 
@@ -127,7 +126,7 @@ def search_vector(
             "filename": metadata["filename"]
         })
 
-    # BM25 SEARCH
+
 
     if len(all_chunks) > 0:
 
@@ -176,7 +175,7 @@ def search_vector(
                 "filename": bm25_chunk["filename"]
             })
 
-    # FILE FILTER
+    
 
     if filename:
 
@@ -189,7 +188,7 @@ def search_vector(
             if result["filename"] == filename
         ]
 
-    # RERANKING
+    
 
     pairs = [
 
