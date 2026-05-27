@@ -27,44 +27,42 @@ if st.button("Upload PDFs"):
 
         with st.spinner("Uploading PDFs..."):
 
-            success_count = 0
+            files_data = {}
 
-            for file in uploaded_files:
+            for i, file in enumerate(uploaded_files):
 
-                files = {
-                    "file": (
-                        file.name,
-                        file,
-                        "application/pdf"
+                files_data[f"file{i+1}"] = (
+                    file.name,
+                    file,
+                    "application/pdf"
+                )
+
+            try:
+
+                response = requests.post(
+                    f"{BACKEND_URL}/upload",
+                    files=files_data
+                )
+
+                if response.status_code == 200:
+
+                    data = response.json()
+
+                    st.success(
+                        f"{data['total_files']} PDF(s) uploaded successfully!"
                     )
-                }
 
-                try:
-
-                    response = requests.post(
-                        f"{BACKEND_URL}/upload",
-                        files=files
-                    )
-
-                    if response.status_code == 200:
-                        success_count += 1
-
-                    else:
-                        st.error(
-                            f"Failed to upload {file.name}"
-                        )
-
-                except Exception as e:
+                else:
 
                     st.error(
-                        f"Error uploading {file.name}: {str(e)}"
+                        f"Upload failed! Status code: {response.status_code}"
                     )
 
-            if success_count > 0:
+                    st.write(response.text)
 
-                st.success(
-                    f"{success_count} PDF(s) uploaded successfully!"
-                )
+            except Exception as e:
+
+                st.error(f"Error: {str(e)}")
 
 question = st.text_input(
     "Ask your question:"
@@ -85,34 +83,42 @@ if st.button("Ask AI"):
                     }
                 )
 
-                data = response.json()
+                if response.status_code == 200:
 
-                st.subheader("Answer")
+                    data = response.json()
 
-                st.write(
-                    data["answer"]
-                )
+                    st.subheader("Answer")
 
-                st.subheader(
-                    "Searched Files"
-                )
-
-                for file in data["searched_files"]:
-
-                    st.write(f"• {file}")
-
-                if "sources" in data:
-
-                    st.subheader(
-                        "Relevant Sources"
+                    st.write(
+                        data["answer"]
                     )
 
-                    for source in data["sources"]:
+                    st.subheader(
+                        "Searched Files"
+                    )
 
-                        st.write(f"• {source}")
+                    for file in data["searched_files"]:
+
+                        st.write(f"• {file}")
+
+                    if "sources" in data:
+
+                        st.subheader(
+                            "Relevant Sources"
+                        )
+
+                        for source in data["sources"]:
+
+                            st.write(f"• {source}")
+
+                else:
+
+                    st.error(
+                        f"Request failed! Status code: {response.status_code}"
+                    )
+
+                    st.write(response.text)
 
             except Exception as e:
 
-                st.error(
-                    f"Error: {str(e)}"
-                )
+                st.error(f"Error: {str(e)}")
