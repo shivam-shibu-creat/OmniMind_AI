@@ -1,44 +1,17 @@
+from openai import OpenAI
 import os
 
-from dotenv import load_dotenv
-
-from openai import OpenAI
-
-from langsmith import traceable
-
-
-
-load_dotenv()
-
-
-
 client = OpenAI(
-
-    base_url="https://openrouter.ai/api/v1",
-
-    api_key=os.getenv(
-        "OPENROUTER_API_KEY"
-    )
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url="https://openrouter.ai/api/v1"
 )
 
-@traceable
-def generate_answer(
-
-    question,
-
-    context
-):
+def generate_answer(question, context):
 
     prompt = f"""
+You are OmniMind AI.
 
-You are an advanced AI assistant.
-
-Answer ONLY from the provided context.
-
-If the answer is not present in the context,
-say:
-
-"I could not find the answer in the document."
+Answer the question using the provided context.
 
 Context:
 {context}
@@ -46,27 +19,20 @@ Context:
 Question:
 {question}
 
+Give a clear and detailed answer.
 """
 
     response = client.chat.completions.create(
 
-        model="openai/gpt-4o-mini",
+        model="openai/gpt-3.5-turbo",
 
         messages=[
-
             {
-
                 "role": "system",
-
-                "content": (
-                    "You are a helpful AI assistant."
-                )
+                "content": "You are a helpful AI assistant."
             },
-
             {
-
                 "role": "user",
-
                 "content": prompt
             }
         ],
@@ -74,12 +40,4 @@ Question:
         temperature=0.2
     )
 
-    answer = (
-
-        response
-        .choices[0]
-        .message
-        .content
-    )
-
-    return answer
+    return response.choices[0].message.content
