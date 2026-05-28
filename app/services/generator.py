@@ -1,6 +1,8 @@
 from openai import OpenAI
 import os
 
+print("OPENAI_API_KEY =", os.getenv("OPENAI_API_KEY"))
+
 client = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
     base_url="https://openrouter.ai/api/v1"
@@ -23,9 +25,7 @@ Give a clear and detailed answer.
 """
 
     response = client.chat.completions.create(
-
-        model="openai/gpt-3.5-turbo",
-
+        model="google/gemini-2.0-flash-exp:free",
         messages=[
             {
                 "role": "system",
@@ -36,7 +36,6 @@ Give a clear and detailed answer.
                 "content": prompt
             }
         ],
-
         temperature=0.2
     )
 
