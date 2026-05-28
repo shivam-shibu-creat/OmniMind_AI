@@ -1,11 +1,8 @@
-from openai import OpenAI
 import os
+from google import genai
 
-print("OPENAI_API_KEY =", os.getenv("OPENAI_API_KEY"))
-
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
-    base_url="https://openrouter.ai/api/v1"
+client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
 )
 
 def generate_answer(question, context):
@@ -24,19 +21,9 @@ Question:
 Give a clear and detailed answer.
 """
 
-    response = client.chat.completions.create(
-        model="google/gemini-2.0-flash-exp:free",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a helpful AI assistant."
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.2
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
     )
 
-    return response.choices[0].message.content
+    return response.text
